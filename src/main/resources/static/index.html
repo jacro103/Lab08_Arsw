@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="/webjars/jquery/jquery.min.js"></script>
         <script src="/webjars/sockjs-client/sockjs.min.js"></script>
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
@@ -29,12 +30,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
     
-    <body>
-        <p>Número Dibujo: <input name="dibujo" id="dibujo" type="number"/></p>
-        <button id="botondibujo" onclick="app.init(dibujo.value)">Conectarse</button>
+    <body onload="app.init()">
+        <body >
+            <div>
+                <select id="connectionType" class="box">
+                    <option value="/newpoint.">Draw</option>
+                    <option value="/newpolygon.">Polygon</option>
+                </select>
+                <input id="drawId" type="number"/>
+                <button onclick="app.connect()">Connect</button>
+            </div>
         X:<input id="x" type="number"/>
         Y:<input id="y" type="number"/>        
-        <button onclick="app.publishPoint($('#x').val(),$('#y').val(),dibujo.value)">Send point</button>
+        <button onclick="app.publishPoint($('#x').val(),$('#y').val())">Send point</button>
         <canvas id="canvas" width="800" height="600"></canvas>
     </body>
 </html>
