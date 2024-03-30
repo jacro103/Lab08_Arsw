@@ -8,6 +8,7 @@ var app = (function () {
     }
     
     var stompClient = null;
+    var canvas;
 
     var addPointToCanvas = function (point) {        
         var canvas = document.getElementById("canvas");
@@ -59,7 +60,13 @@ var app = (function () {
     return {
 
         init: function () {
-            var can = document.getElementById("canvas");
+            canvas = document.getElementById("canvas");
+            canvas.AddEventListener("click", function (event){
+
+                var mousePosition = getMousePosition(event);
+                app.publishPoint(mousePosition.x,mousePosition.y);
+
+            });
             
             //websocket connection
             connectAndSubscribe();
@@ -67,10 +74,11 @@ var app = (function () {
 
         publishPoint: function(px,py){
             var pt=new Point(px,py);
-            console.info("publishing point at "+pt);
+           // console.info("publishing point at "+pt);
             addPointToCanvas(pt);
             console.log(stompClient);
             stompClient.send("/topic/newpoint.", {}, JSON.stringify(pt));
+            app.init();
             alert('nuevo punto recibido x' + px + 'y:'  + py );
             
             //publicar el evento
