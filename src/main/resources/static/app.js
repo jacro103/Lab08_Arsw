@@ -9,7 +9,11 @@ var app = (function () {
         }        
     }
 
-
+    class Polygon{
+        constructor(points){
+            this.points = points;
+        }
+    }
     
     var stompClient = null;
     var canvas
@@ -32,6 +36,22 @@ var app = (function () {
         };
     };
 
+    var drawNewPolygon = function(polygon){
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.moveTo(polygon.points[0].x, polygon.points[0].y)
+        ctx.fillStyle = '#00FF9B';
+        console.log("Longitud: " +  polygon.points.length);
+        for (var i = 1; i < polygon.points.length; i++) {
+            var point = polygon.points[i];
+            ctx.lineTo(point.x, point.y);
+        }
+        ctx.lineTo(polygon.points[0].x, polygon.points[0].y);
+        ctx.closePath();
+        ctx.fill();
+    }
+
 
     var connectAndSubscribe = function (topic) {
         console.info('Connecting to WS...');
@@ -49,6 +69,9 @@ var app = (function () {
                 // //alert('Nuevo punto recibido - X: ' + x + ', Y: ' + y);
                 if(topic.includes("newpoint")){
                     addPointToCanvas(newPoint);
+                }else {
+                    polygon = new Polygon(newPoint);
+                    drawNewPolygon(polygon);
                 }
 
                 
