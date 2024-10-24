@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Controller
 public class STOMPMessagesHandler {
     private static final Logger logger = LoggerFactory.getLogger(STOMPMessagesHandler.class);
-    
+
     private Map<String, CopyOnWriteArrayList<Point>> conex = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate msgt;
 
@@ -27,8 +27,10 @@ public class STOMPMessagesHandler {
 
     @MessageMapping("/newpoint.{numdibujo}")
     public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) throws Exception {
-        logger.info("Nuevo punto recibido en el servidor: {}", pt); // Reemplaza System.out por logger
-
+        
+        // Log the drawing ID without exposing user-controlled data
+        logger.info("Nuevo punto recibido en el servidor para dibujo ID: {}", numdibujo);
+        
         msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
         if (conex.get(numdibujo) != null) {
             conex.get(numdibujo).add(pt);
@@ -43,4 +45,5 @@ public class STOMPMessagesHandler {
         }
     }
 }
+
 
