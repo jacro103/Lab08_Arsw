@@ -1,6 +1,8 @@
 package edu.eci.arsw.collabpaint;
 
 import edu.eci.arsw.collabpaint.model.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -13,6 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class STOMPMessagesHandler {
+    private static final Logger logger = LoggerFactory.getLogger(STOMPMessagesHandler.class);
+    
     private Map<String, CopyOnWriteArrayList<Point>> conex = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate msgt;
 
@@ -23,7 +27,8 @@ public class STOMPMessagesHandler {
 
     @MessageMapping("/newpoint.{numdibujo}")
     public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) throws Exception {
-        System.out.println("Nuevo punto recibido en el servidor!:" + pt);
+        logger.info("Nuevo punto recibido en el servidor: {}", pt); // Reemplaza System.out por logger
+
         msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
         if (conex.get(numdibujo) != null) {
             conex.get(numdibujo).add(pt);
@@ -38,3 +43,4 @@ public class STOMPMessagesHandler {
         }
     }
 }
+
