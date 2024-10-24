@@ -27,25 +27,20 @@ public class STOMPMessagesHandler {
 
     @MessageMapping("/newpoint.{numdibujo}")
     public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) throws Exception {
-        try {
-            // Registro genérico para evitar registrar datos sensibles
-            logger.info("Nuevo punto recibido en el servidor para el dibujo: {}", numdibujo);
-            
-            msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
-            if (conex.get(numdibujo) != null) {
-                conex.get(numdibujo).add(pt);
-                if (conex.get(numdibujo).size() % 4 == 0) {
-                    msgt.convertAndSend("/topic/newpolygon." + numdibujo, conex.get(numdibujo));
-                    conex.put(numdibujo, new CopyOnWriteArrayList<>());
-                }
-            } else {
-                CopyOnWriteArrayList<Point> n = new CopyOnWriteArrayList<>();
-                n.add(pt);
-                conex.put(numdibujo, n);
+        logger.info("Nuevo punto recibido en el servidor: {}", pt); // Reemplaza System.out por logger
+
+        msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
+        if (conex.get(numdibujo) != null) {
+            conex.get(numdibujo).add(pt);
+            if (conex.get(numdibujo).size() % 4 == 0) {
+                msgt.convertAndSend("/topic/newpolygon." + numdibujo, conex.get(numdibujo));
+                conex.put(numdibujo, new CopyOnWriteArrayList<>());
             }
-        } catch (Exception e) {
-            logger.error("Error al manejar el punto para el dibujo: {}", numdibujo, e);
-            throw e;  // Lanza la excepción original
+        } else {
+            CopyOnWriteArrayList<Point> n = new CopyOnWriteArrayList<>();
+            n.add(pt);
+            conex.put(numdibujo, n);
         }
     }
 }
+
