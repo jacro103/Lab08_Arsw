@@ -1,22 +1,21 @@
 var app = (function () {
 
-    let topic = "0"; // Cambiado a let
-
+    let topic = "0";
     class Point {
         constructor(x, y) {
             this.x = x;
             this.y = y;
-        }        
+        }
     }
-
+    
     class Polygon {
         constructor(points) {
             this.points = points;
         }
     }
     
-    let stompClient = null; // Cambiado a let
-    let canvas; // Cambiado a let
+    let stompClient = null;
+    let canvas;
 
     const addPointToCanvas = function (point) {        
         canvas = document.getElementById("canvas");
@@ -36,7 +35,6 @@ var app = (function () {
     };
 
     const drawNewPolygon = function (polygon) {
-        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         ctx.beginPath();
         ctx.moveTo(polygon.points[0].x, polygon.points[0].y);
@@ -56,11 +54,9 @@ var app = (function () {
         const socket = new SockJS('/stompendpoint');
         stompClient = Stomp.over(socket);
         
-        // Subscribe to /topic/TOPICXX when connections succeed
         stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic' + topic, function (eventbody) {
-                // Handle events received from the server
                 const newPoint = JSON.parse(eventbody.body);
                 if (topic.includes("newpoint")) {
                     addPointToCanvas(newPoint);
@@ -68,13 +64,15 @@ var app = (function () {
                     const polygon = new Polygon(newPoint);
                     drawNewPolygon(polygon);
                 }
+            }, function (error) {
+                console.error("Subscription error: ", error);
             });
+        }, function (error) {
+            console.error("Connection error: ", error);
         });
     };
 
     return {
-        // Evento de clic en el canvas para agregar puntos y 
-        // establecer la conexión WebSocket para recibir puntos de otros usuarios
         init: function () {
             canvas = document.getElementById("canvas");
             canvas.addEventListener("click", function (event) {
@@ -83,9 +81,7 @@ var app = (function () {
             });
             connectAndSubscribe();
         },
-
         connect: function () {
-            const canvas = document.getElementById("canvas");
             const option = document.getElementById("connectionType");
             const drawId = $("#drawId").val();
             topic = option.value + drawId;
@@ -98,18 +94,16 @@ var app = (function () {
                 });
             }
         },
-
         publishPoint: function (px, py) {
             const pt = new Point(px, py);
             addPointToCanvas(pt);
             stompClient.send("/app" + topic, {}, JSON.stringify(pt));
         },
-
         disconnect: function () {
             if (stompClient !== null) {
                 stompClient.disconnect();
             }
-            setConnected(false);
+            // Aquí puedes limpiar event listeners si es necesario
             console.log("Disconnected");
         }
     };
