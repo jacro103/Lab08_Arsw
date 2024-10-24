@@ -17,7 +17,6 @@ public class STOMPMessagesHandler {
 
     private Map<String, CopyOnWriteArrayList<Point>> conex = new ConcurrentHashMap<>();
 
-    @Autowired
     SimpMessagingTemplate msgt;
 
     @MessageMapping("/newpoint.{numdibujo}")
