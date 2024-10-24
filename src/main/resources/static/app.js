@@ -1,10 +1,24 @@
 var app = (function () {
-
     let topic = "0";
+
     class Point {
         constructor(x, y) {
             this.x = x;
             this.y = y;
+        }
+
+        // Métodos get para x e y
+        getX() {
+            return this.x;
+        }
+
+        getY() {
+            return this.y;
+        }
+
+        // Método toString para representar el punto
+        toString() {
+            return `Point(${this.x}, ${this.y})`;
         }
     }
     
@@ -17,14 +31,14 @@ var app = (function () {
     let stompClient = null;
     let canvas;
 
-    const addPointToCanvas = function (point) {        
+    const addPointToCanvas = function (point) {
         canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
         ctx.beginPath();
         ctx.arc(point.x, point.y, 1, 0, 2 * Math.PI);
         ctx.stroke();
     };
-    
+
     const getMousePosition = function (evt) {
         canvas = document.getElementById("canvas");
         const rect = canvas.getBoundingClientRect();
@@ -103,7 +117,6 @@ var app = (function () {
             if (stompClient !== null) {
                 stompClient.disconnect();
             }
-            // Aquí puedes limpiar event listeners si es necesario
             console.log("Disconnected");
         }
     };
