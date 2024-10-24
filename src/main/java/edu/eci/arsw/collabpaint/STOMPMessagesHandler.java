@@ -6,29 +6,30 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class STOMPMessagesHandler {
-
     private Map<String, CopyOnWriteArrayList<Point>> conex = new ConcurrentHashMap<>();
+    private final SimpMessagingTemplate msgt;
 
-    SimpMessagingTemplate msgt;
+    @Autowired
+    public STOMPMessagesHandler(SimpMessagingTemplate msgt) {
+        this.msgt = msgt;
+    }
 
     @MessageMapping("/newpoint.{numdibujo}")
     public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) throws Exception {
-        System.out.println("Nuevo punto recibido en el servidor!:"+pt);
-        msgt.convertAndSend("/topic/newpoint."+numdibujo, pt);
-        if (conex.get(numdibujo) != null){
+        System.out.println("Nuevo punto recibido en el servidor!:" + pt);
+        msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
+        if (conex.get(numdibujo) != null) {
             conex.get(numdibujo).add(pt);
-            if (conex.get(numdibujo).size() % 4 == 0){
+            if (conex.get(numdibujo).size() % 4 == 0) {
                 msgt.convertAndSend("/topic/newpolygon." + numdibujo, conex.get(numdibujo));
                 conex.put(numdibujo, new CopyOnWriteArrayList<>());
-
             }
         } else {
             CopyOnWriteArrayList<Point> n = new CopyOnWriteArrayList<>();
