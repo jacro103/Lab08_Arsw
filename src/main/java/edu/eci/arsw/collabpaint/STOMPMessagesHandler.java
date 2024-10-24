@@ -26,12 +26,10 @@ public class STOMPMessagesHandler {
     }
 
     @MessageMapping("/newpoint.{numdibujo}")
-    public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) {
-        // Registro genérico para evitar registrar datos sensibles
-        logger.info("Nuevo punto recibido en el servidor para el dibujo: {}", numdibujo);
+    public void handlePointEvent(Point pt, @DestinationVariable String numdibujo)  {
+        logger.info("Nuevo punto recibido en el servidor: {}", pt); 
 
         msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
-        
         if (conex.get(numdibujo) != null) {
             conex.get(numdibujo).add(pt);
             if (conex.get(numdibujo).size() % 4 == 0) {
@@ -45,3 +43,4 @@ public class STOMPMessagesHandler {
         }
     }
 }
+
