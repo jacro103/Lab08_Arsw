@@ -26,6 +26,11 @@ const app = (function () {
         constructor(points) {
             this.points = points;
         }
+
+        // Método para obtener los puntos
+        getPoints() {
+            return this.points;
+        }
     }
     
     let stompClient = null;
@@ -51,14 +56,14 @@ const app = (function () {
     const drawNewPolygon = function (polygon) {
         const ctx = canvas.getContext('2d');
         ctx.beginPath();
-        ctx.moveTo(polygon.points[0].x, polygon.points[0].y);
+        ctx.moveTo(polygon.getPoints()[0].x, polygon.getPoints()[0].y);
         ctx.fillStyle = '#00FF9B';
-        console.log("Longitud: " + polygon.points.length);
-        for (let i = 1; i < polygon.points.length; i++) {
-            const point = polygon.points[i];
+        console.log("Longitud: " + polygon.getPoints().length);
+        for (let i = 1; i < polygon.getPoints().length; i++) {
+            const point = polygon.getPoints()[i];
             ctx.lineTo(point.x, point.y);
         }
-        ctx.lineTo(polygon.points[0].x, polygon.points[0].y);
+        ctx.lineTo(polygon.getPoints()[0].x, polygon.getPoints()[0].y);
         ctx.closePath();
         ctx.fill();
     };
