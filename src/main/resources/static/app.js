@@ -1,4 +1,4 @@
-var app = (function () {
+const app = (function () {
     let topic = "0";
 
     class Point {
