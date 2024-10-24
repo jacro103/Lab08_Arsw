@@ -27,7 +27,7 @@ public class STOMPMessagesHandler {
 
     @MessageMapping("/newpoint.{numdibujo}")
     public void handlePointEvent(Point pt, @DestinationVariable String numdibujo)  {
-        logger.info("Nuevo punto recibido en el servidor: {}", pt); 
+        logger.info("Nuevo punto recibido en el servidor: {}", pt); // Reemplaza System.out por logger
 
         msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
         if (conex.get(numdibujo) != null) {
