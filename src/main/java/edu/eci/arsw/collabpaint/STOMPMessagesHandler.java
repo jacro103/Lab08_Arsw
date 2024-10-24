@@ -1,5 +1,6 @@
 package edu.eci.arsw.collabpaint;
 
+import edu.eci.arsw.collabpaint.exception.PointHandlingException; // Importa la nueva excepción
 import edu.eci.arsw.collabpaint.model.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,21 +27,25 @@ public class STOMPMessagesHandler {
     }
 
     @MessageMapping("/newpoint.{numdibujo}")
-    public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) throws Exception {
-        logger.info("Nuevo punto recibido en el servidor: {}", pt); // Reemplaza System.out por logger
+    public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) throws PointHandlingException { // Lanza la excepción personalizada
+        try {
+            logger.info("Nuevo punto recibido en el servidor: {}", pt);
 
-        msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
-        if (conex.get(numdibujo) != null) {
-            conex.get(numdibujo).add(pt);
-            if (conex.get(numdibujo).size() % 4 == 0) {
-                msgt.convertAndSend("/topic/newpolygon." + numdibujo, conex.get(numdibujo));
-                conex.put(numdibujo, new CopyOnWriteArrayList<>());
+            msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
+            if (conex.get(numdibujo) != null) {
+                conex.get(numdibujo).add(pt);
+                if (conex.get(numdibujo).size() % 4 == 0) {
+                    msgt.convertAndSend("/topic/newpolygon." + numdibujo, conex.get(numdibujo));
+                    conex.put(numdibujo, new CopyOnWriteArrayList<>());
+                }
+            } else {
+                CopyOnWriteArrayList<Point> n = new CopyOnWriteArrayList<>();
+                n.add(pt);
+                conex.put(numdibujo, n);
             }
-        } else {
-            CopyOnWriteArrayList<Point> n = new CopyOnWriteArrayList<>();
-            n.add(pt);
-            conex.put(numdibujo, n);
+        } catch (Exception e) {
+            logger.error("Error al manejar el punto: {}", e.getMessage());
+            throw new PointHandlingException("Error al manejar el punto para el dibujo: " + numdibujo, e);
         }
     }
 }
-
