@@ -9,3 +9,4 @@ public class PointHandlingException extends Exception {
         super(message, cause);
     }
 }
+
