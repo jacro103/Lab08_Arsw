@@ -29,7 +29,9 @@ public class STOMPMessagesHandler {
     @MessageMapping("/newpoint.{numdibujo}")
     public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) throws PointHandlingException {
         try {
-            logger.info("Nuevo punto recibido en el servidor: {}", pt);
+            // Registra un mensaje genérico en lugar de los datos del punto
+            logger.info("Nuevo punto recibido en el servidor para el dibujo: {}", numdibujo);
+            
             msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
             if (conex.get(numdibujo) != null) {
                 conex.get(numdibujo).add(pt);
@@ -44,7 +46,7 @@ public class STOMPMessagesHandler {
             }
         } catch (Exception e) {
             // Lanza la excepción personalizada
-            throw new PointHandlingException("Error al manejar el punto: " + pt, e);
+            throw new PointHandlingException("Error al manejar el punto", e);
         }
     }
 }
