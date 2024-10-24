@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html Liang="valor">
+<html lang="en" xml:lang="en">
     <head>
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
@@ -9,21 +9,17 @@
         <script src="/webjars/sockjs-client/sockjs.min.js"></script>
         <script src="/webjars/stomp-websocket/stomp.min.js"></script>
         <script src="/app.js"></script>
-
     </head>
-
-
     
     <body onload="app.init()">
-        <body >
-            <div>
-                <select id="connectionType" class="box">
-                    <option value="/newpoint.">Draw</option>
-                    <option value="/newpolygon.">Polygon</option>
-                </select>
-                <input id="drawId" type="number"/>
-                <button onclick="app.connect()">Connect</button>
-            </div>
+        <div>
+            <select id="connectionType" class="box">
+                <option value="/newpoint.">Draw</option>
+                <option value="/newpolygon.">Polygon</option>
+            </select>
+            <input id="drawId" type="number"/>
+            <button onclick="app.connect()">Connect</button>
+        </div>
         X:<input id="x" type="number"/>
         Y:<input id="y" type="number"/>        
         <button onclick="app.publishPoint($('#x').val(),$('#y').val())">Send point</button>
