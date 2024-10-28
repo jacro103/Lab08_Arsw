@@ -23,7 +23,8 @@ public class STOMPMessagesHandler {
 
     @MessageMapping("/newpoint.{numdibujo}")
     public void handlePointEvent(Point pt, @DestinationVariable String numdibujo) {
-
+        // Registro de la recepción de un nuevo punto
+        logger.info("Nuevo punto recibido en el servidor: {}", pt);
         
         msgt.convertAndSend("/topic/newpoint." + numdibujo, pt);
         
